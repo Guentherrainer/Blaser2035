@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Blaser 2035</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A0A0A;--paper:#FFFFFF;--pink:#EF55A0;--grey:#8A8A8A;--line:#E4E4E4;
+--sans:"Instrument Sans",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+--ease:cubic-bezier(.2,.7,.1,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--ink)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:1px solid var(--ink);outline-offset:4px}
+p,h1,h2,h3{text-wrap:pretty}
+.pink{color:var(--pink)}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.grey{color:var(--grey)}
+
+.scene{position:relative;min-height:100vh;padding:14vh 6vw 12vh;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-content:start;border-top:1px solid var(--line)}
+.scene[hidden]{display:none}
+.scene:first-of-type{border-top:0}
+.gut{grid-column:1 / span 3;padding-top:.5em}
+.gut .label{position:sticky;top:6vh;display:block}
+.main{grid-column:4 / span 8}
+.wide{grid-column:4 / span 9}
+.full{grid-column:1 / -1}
+
+.rv{opacity:0;transform:translateY(10px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.in .rv,.rv.on{opacity:1;transform:none}
+
+.q{font-size:clamp(30px,4.2vw,58px);line-height:1.12;font-weight:600;letter-spacing:-.015em;max-width:20ch}
+.h{font-size:clamp(28px,3.4vw,46px);line-height:1.14;font-weight:600;letter-spacing:-.012em;max-width:22ch}
+.h2{font-size:clamp(22px,2.2vw,30px);line-height:1.25;font-weight:600;letter-spacing:-.005em;max-width:30ch}
+.lead{font-size:clamp(18px,1.4vw,21px);line-height:1.5;max-width:40ch}
+.small{font-size:15px;line-height:1.55;max-width:52ch}
+.sp1{margin-top:16px}.sp2{margin-top:32px}.sp3{margin-top:56px}.sp4{margin-top:96px}
+
+.go{font-family:var(--mono);font-size:13px;letter-spacing:.04em;display:inline-flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--ink);transition:gap .4s var(--ease)}
+.go::after{content:"";width:28px;height:1px;background:var(--ink);transition:width .4s var(--ease)}
+.go:hover::after{width:48px}
+.go[disabled]{opacity:.25;cursor:default}
+
+/* invoice */
+.doc{border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);padding:22px 0 18px;max-width:760px;font-family:var(--mono);font-size:13px}
+.doc-head{display:grid;grid-template-columns:1fr auto;gap:8px 24px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.doc-head b{font-weight:500}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 88px 88px;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.row span:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+.row.th{color:var(--grey);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.row.sum{border-bottom:0;font-weight:500;padding-top:16px}
+.big2{display:flex;flex-wrap:wrap;gap:28px 72px;margin-top:40px}
+.big2 div{font-family:var(--sans);font-weight:600;font-size:clamp(48px,7vw,104px);line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big2 small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);font-weight:400;margin-top:12px}
+.stamp{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ink);padding:6px 10px;margin-bottom:28px}
+
+.calc{font-family:var(--mono);font-size:13px;line-height:1.8;max-width:620px;border-left:1px solid var(--ink);padding-left:20px}
+.calc a{color:var(--grey)}
+
+/* signals */
+.sig-count{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.sig{display:none}
+.sig.cur{display:block;animation:sigIn .8s var(--ease)}
+@keyframes sigIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sig-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 48px;margin-top:40px}
+.sig-grid > div{border-top:1px solid var(--ink);padding-top:14px}
+.sig-grid .label{display:block;margin-bottom:10px}
+.quote{font-size:19px;line-height:1.45}
+.src{font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--grey);margin-top:28px;display:flex;flex-wrap:wrap;gap:4px 20px}
+.src a{color:var(--grey)}
+.ticks{display:flex;gap:6px;margin-top:10px}
+.ticks i{width:28px;height:2px;background:var(--line);transition:background .4s}
+.ticks i.on{background:var(--ink)}
+
+/* connect */
+.stack{font-family:var(--mono);font-size:clamp(16px,1.6vw,22px);line-height:1;position:relative}
+.stack div{padding:18px 0;border-bottom:1px solid var(--line);transition:transform 1.2s var(--ease),opacity 1.2s var(--ease),color .6s;display:flex;gap:20px}
+.stack div span:first-child{color:var(--grey);width:2.5ch}
+.stack.merge div{opacity:.18}
+.stack.merge div:nth-child(1){transform:translateY(90px)}
+.stack.merge div:nth-child(2){transform:translateY(30px)}
+.stack.merge div:nth-child(3){transform:translateY(-30px)}
+.stack.merge div:nth-child(4){transform:translateY(-90px)}
+
+/* fork */
+.fork{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:48px}
+.opt{text-align:left;border-top:2px solid var(--ink);padding:20px 0 8px;transition:opacity .5s,border-color .5s}
+.opt h3{font-size:clamp(26px,2.6vw,36px);font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.opt p{margin-top:12px;font-size:16px;max-width:36ch}
+.opt .label{display:block;margin-bottom:12px}
+.opt:hover h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.fork.chosen .opt{cursor:default}
+.fork.chosen .opt:hover h3{text-decoration:none}
+.fork.chosen .opt:not(.sel){opacity:.28}
+.opt.sel{border-top-color:var(--pink)}
+.cons{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 48px;margin-top:48px}
+.cons > div{border-top:1px solid var(--line);padding-top:14px}
+
+/* today vs 2035 */
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px;margin-top:8px}
+.facts{list-style:none;font-family:var(--mono);font-size:13px;line-height:1.55}
+.facts li{padding:12px 0;border-bottom:1px solid var(--line)}
+.facts li:first-child{border-top:1px solid var(--ink)}
+.facts a{color:var(--grey)}
+
+/* migration */
+.mig{margin-top:48px;max-width:860px}
+.mrow{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.mrow .label{color:var(--ink)}
+.bar{height:14px;background:var(--ink);width:0;transition:width .12s linear}
+.bar.open{background:repeating-linear-gradient(90deg,var(--ink) 0 6px,transparent 6px 10px);height:1px;margin:6px 0 7px}
+.slider{display:flex;align-items:center;gap:20px;margin-top:36px;font-family:var(--mono);font-size:13px;max-width:860px}
+.slider input{flex:1;-webkit-appearance:none;appearance:none;height:1px;background:var(--ink);outline:0}
+.slider input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:22px;background:var(--ink);border:0;border-radius:0;cursor:ew-resize}
+.slider input::-moz-range-thumb{width:14px;height:22px;background:var(--ink);border:0;border-radius:0;cursor:ew-resize}
+.slider input:focus-visible{outline:1px solid var(--ink);outline-offset:10px}
+#yr{font-size:28px;font-family:var(--sans);font-weight:600;min-width:3.2ch;font-variant-numeric:tabular-nums}
+
+/* hypotheses */
+.hyp{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;margin-top:88px}
+.hyp:first-of-type{margin-top:48px}
+.hyp .n{grid-column:span 2;font-family:var(--mono);font-size:13px;padding-top:.6em}
+.hyp .b{grid-column:span 9}
+.hyp.o2 .n{grid-column:2 / span 2}.hyp.o2 .b{grid-column:4 / span 9}
+.hyp.o3 .n{grid-column:1 / span 2}.hyp.o3 .b{grid-column:3 / span 8}
+.hyp .meta{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 40px;margin-top:24px}
+.hyp .meta > div{border-top:1px solid var(--line);padding-top:12px;font-size:15px;line-height:1.55}
+.hyp .meta .label{display:block;margin-bottom:6px}
+.test{font-family:var(--mono);font-size:13px;margin-top:20px;color:var(--ink)}
+
+/* equation */
+.eq{font-size:clamp(34px,6vw,88px);font-weight:600;letter-spacing:-.025em;line-height:1.05;display:flex;flex-wrap:wrap;gap:0 .3em;align-items:baseline}
+.strike{position:relative;display:inline-block;transition:color 1.2s}
+.strike::after{content:"";position:absolute;left:-2%;right:-2%;top:54%;height:.09em;background:var(--pink);transform:scaleX(0);transform-origin:left center;transition:transform 1.1s var(--ease)}
+.eq.cut .strike::after{transform:scaleX(1)}
+.eq.cut .strike{color:var(--grey)}
+.qm{opacity:0;transition:opacity 1s .9s}
+.eq.cut .qm{opacity:1}
+
+.counter{max-height:0;overflow:hidden;transition:max-height 1.2s var(--ease)}
+.counter.open{max-height:1400px}
+
+.end{font-family:var(--mono);font-size:11px;color:var(--grey);letter-spacing:.06em;text-transform:uppercase;margin-top:120px}
+
+@media (max-width:860px){
+  body{font-size:17px}
+  .scene{padding:12vh 22px 10vh;column-gap:0}
+  .gut,.main,.wide{grid-column:1 / -1}
+  .gut{margin-bottom:28px}
+  .gut .label{position:static}
+  .sig-grid,.fork,.cons,.split,.hyp .meta{grid-template-columns:1fr}
+  .hyp .n,.hyp .b,.hyp.o2 .n,.hyp.o2 .b,.hyp.o3 .n,.hyp.o3 .b{grid-column:1 / -1}
+  .hyp .n{margin-bottom:10px}
+  .row{grid-template-columns:minmax(0,1fr) 64px 64px;gap:10px;font-size:12px}
+  .mrow{grid-template-columns:120px minmax(0,1fr)}
+  .stack.merge div{transform:none!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .rv{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- 00 opening -->
+<section class="scene in" id="s0" data-screen-label="00 Frage" style="min-height:100vh;align-content:center">
+  <div class="gut"><span class="label">Blaser 2035</span></div>
+  <div class="main">
+    <p class="lead rv on">Herr Blaser,</p>
+    <p class="lead grey rv on sp1">die Frage war diese:</p>
+    <h1 class="q sp3" tabindex="-1">Was, wenn der grösste Wachstumsmotor Ihrer Gruppe 2035 genau das Geschäft ist, das den Verbrauch des eigenen Kernprodukts reduziert?</h1>
+    <p class="lead sp3 grey">Hier ist, wohin sie führt, wenn man sie nicht vorschnell auflöst.</p>
+    <div class="sp2"><button class="go" data-next="s1">Zu Ende denken</button></div>
+    <p class="label sp2">Etwa vier Minuten</p>
+  </div>
+</section>
+
+<!-- 01 artifact -->
+<section class="scene" id="s1" hidden data-screen-label="01 Beleg 2035">
+  <div class="gut"><span class="label">2035</span></div>
+  <div class="wide">
+    <span class="stamp rv">Spekulative Zukunftshypothese · 2035</span>
+    <h2 class="h2 rv" tabindex="-1">Ein Beleg aus dem Jahr 2035.</h2>
+    <div class="doc sp2 rv" role="table" aria-label="Spekulativer Jahresbeleg 2035">
+      <div class="doc-head">
+        <b>Blaser Swisslube AG · Hasle-Rüegsau</b><span>Jahresbeleg 2035</span>
+        <span class="grey">Kunde: Lohnfertiger, Schweizer Mittelland (fiktiv)</span><span class="grey">Maschine 07</span>
+      </div>
+      <div class="row th" role="row"><span>Position, pro Maschine</span><span>2026</span><span>2035</span></div>
+      <div class="row" role="row"><span>Konzentrat, Index</span><span>100</span><span data-count="100:60">100</span></div>
+      <div class="row" role="row"><span>Kontrollgänge am Tank</span><span>täglich</span><span>keine</span></div>
+      <div class="row" role="row"><span>Liquidtool, Index</span><span>0</span><span data-count="0:53">0</span></div>
+      <div class="row sum" role="row"><span>Umsatz der Gruppe mit dieser Maschine, Index</span><span>100</span><span data-count="100:113">100</span></div>
+    </div>
+    <div class="big2 rv">
+      <div><span data-count="0:-40" data-fmt="pct">0 %</span><small>Kernprodukt</small></div>
+      <div><span data-count="0:13" data-fmt="pctp">0 %</span><small>Umsatz</small></div>
+    </div>
+    <p class="label sp2 rv">Illustrativ. Keine Prognose und keine Blaser-Zahl.</p>
+    <div class="sp3 rv"><button class="go" data-next="s2">Schlechte Nachricht?</button></div>
+  </div>
+</section>
+
+<!-- 02 reversal -->
+<section class="scene" id="s2" hidden data-screen-label="02 Kommt darauf an">
+  <div class="gut"><span class="label">Umkehr</span></div>
+  <div class="main">
+    <h2 class="h rv" tabindex="-1">Kommt darauf an, was Blaser 2035 verkauft.</h2>
+    <p class="lead sp4 rv" data-d="1400">Und eine Anmerkung zum Beleg: Er ist <span class="pink">nicht</span> aus 2035.</p>
+    <p class="lead sp1 rv" data-d="2200">Jede Zahl darauf lässt sich mit heutigen, öffentlichen Angaben rechnen.</p>
+    <div class="calc sp3 rv" data-d="3000">
+      <div>Konzentrat pro Maschine: CHF 2'000 pro Jahr <span class="grey">(Annahme)</span></div>
+      <div>Einsparung: 40 % <span class="grey">(Liquidtool: «Ø 40% coolant savings»)</span></div>
+      <div>AutoPilot: EUR 95 pro Maschine und Monat, jährlich, rund CHF 1'060 pro Jahr <span class="grey">(<a href="https://liquidtool.com/en/pricing/" target="_blank" rel="noopener noreferrer">liquidtool.com/pricing</a>)</span></div>
+      <div class="sp1">1'200 + 1'060 = 2'260. Also 113 statt 100. <span class="grey">Marge nicht modelliert.</span></div>
+    </div>
+    <p class="small sp2 rv" data-d="3400">Unter rund CHF 2'650 Konzentrat pro Maschine und Jahr bringt das Abo schon heute mehr ein, als es an Flüssigkeit wegnimmt.</p>
+    <p class="h2 sp4 rv" data-d="4200">Die Frage ist also nicht, ob weniger Verbrauch Blaser schadet. Sondern was passiert, wenn ihn jemand anderes liefert.</p>
+    <div class="sp3 rv" data-d="4600"><button class="go" data-next="s3">Zurück zu heute</button></div>
+  </div>
+</section>
+
+<!-- 03 signals -->
+<section class="scene" id="s3" hidden data-screen-label="03 Vier Entwicklungen">
+  <div class="gut"><span class="label">2026</span><div class="ticks" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div></div>
+  <div class="wide">
+    <p class="h2 rv" tabindex="-1">Vier Entwicklungen. Einzeln unauffällig.</p>
+
+    <article class="sig cur sp3" data-i="0">
+      <p class="label">01 / 04 · Markt</p>
+      <h3 class="h sp1">Weniger Verbrauch wird zum Standard. Bei allen.</h3>
+      <div class="sig-grid">
+        <div><span class="label">Beleg</span><p class="quote">Quaker Houghton meldet bei einem Kunden 27 % weniger Verbrauch pro Einheit. Castrol bringt SmartCoolant ab 2026 in ausgewählte Märkte. Motorex automatisiert aus Langenthal. Fuchs erwartet für den Markt ein Volumenwachstum von «nur 0,8% pro Jahr».</p></div>
+        <div><span class="label">Für Blaser</span><p class="quote">Weniger Liter kommen ohnehin. Das Risiko ist nicht der eigene Liquidtool-Kunde. Es ist der Blaser-Kunde, der mit der Box eines anderen spart.</p></div>
+      </div>
+      <p class="src">
+        <a href="https://gearsolutions.com/news/quaker-houghton-launches-digital-fluid-optimization-platform/" target="_blank" rel="noopener noreferrer">Gear Solutions, 15.10.2024</a>
+        <a href="https://www.castrol.com/en/global/corporate/about-castrol/newsroom/introducing-castrol-smart-coolant.html" target="_blank" rel="noopener noreferrer">Castrol, 16.09.2025</a>
+        <a href="https://motorex.com/en-us/news/2024-02-27-future-proof-cooling-lubricant-concept--716097" target="_blank" rel="noopener noreferrer">Motorex, 27.02.2024</a>
+        <a href="https://themarket.ch/unternehmen/wie-der-deutsche-schmierstoffhersteller-fuchs-weiterwachsen-will-ld.16554" target="_blank" rel="noopener noreferrer">The Market, 16.04.2026</a>
+      </p>
+    </article>
+
+    <article class="sig sp3" data-i="1">
+      <p class="label">02 / 04 · Arbeit</p>
+      <h3 class="h sp1">Am Tank steht immer seltener jemand.</h3>
+      <div class="sig-grid">
+        <div><span class="label">Beleg</span><p class="quote">30 % der Betriebe im Swissmechanic-Barometer zählen den Fachkräftemangel zu ihren grössten Herausforderungen, 8 Punkte mehr als im April. Liquidtool-Kunden beschreiben den Nutzen in Zeit: «1 hour saved every day».</p></div>
+        <div><span class="label">Für Blaser</span><p class="quote">Der Kunde spart Stunden, nicht nur Liter. Der Wert entsteht dort, wo niemand mehr nachsehen muss. Je weniger Menschen hinsehen, desto mehr zählt, dass die Emulsion allein stabil bleibt.</p></div>
+      </div>
+      <p class="src">
+        <a href="https://www.swissinfo.ch/ger/industrie-kmu-sehen-erste-positive-signale-noch-keine-trendwende/91955478" target="_blank" rel="noopener noreferrer">Swissmechanic Q2 2026, via swissinfo</a>
+        <a href="https://liquidtool.com/en/" target="_blank" rel="noopener noreferrer">liquidtool.com, abgerufen 23.09.2026</a>
+      </p>
+    </article>
+
+    <article class="sig sp3" data-i="2">
+      <p class="label">03 / 04 · Maschine</p>
+      <h3 class="h sp1">Die Steuerung beginnt, über das Kühlmittel zu entscheiden.</h3>
+      <div class="sig-grid">
+        <div><span class="label">Beleg</span><p class="quote">DMG MORI, Hannover Messe 2026: «AI Chip Removal» erkennt Spanansammlungen und entfernt sie «via intelligently controlled coolant nozzles». Heidenhain lässt die Steuerung den Freiflächenverschleiss per KI bestimmen.</p></div>
+        <div><span class="label">Für Blaser</span><p class="quote">Das Kühlmittel wird Teil eines Regelkreises. Wer der Steuerung den Zustand der Emulsion liefert, sitzt im Prozess. Wer nur Liter liefert, steht daneben.</p></div>
+      </div>
+      <p class="src">
+        <a href="https://en.dmgmori.com/news-and-media/news/nws2662-ai-in-cnc-manufacturing" target="_blank" rel="noopener noreferrer">DMG MORI, April 2026</a>
+        <a href="https://www.klartext-portal.com/software" target="_blank" rel="noopener noreferrer">Heidenhain Klartext, 27.08.2026</a>
+      </p>
+    </article>
+
+    <article class="sig sp3" data-i="3">
+      <p class="label">04 / 04 · Präzedenz</p>
+      <h3 class="h sp1">In der Landwirtschaft ist die Frage schon beantwortet.</h3>
+      <div class="sig-grid">
+        <div><span class="label">Beleg</span><p class="quote">John Deere See &amp; Spray: auf 5 Millionen Acres im Durchschnitt fast 50 % weniger Herbizid. Bezahlt wird nur, wo gespart wird: «If See &amp; Spray doesn't save you money, you don't pay.»</p></div>
+        <div><span class="label">Für Blaser</span><p class="quote">Den Wert des eingesparten Mittels erhält nicht, wer es herstellt. Sondern wer misst. Fuchs warnte schon 2018 vor «digitalization companies wedging between existing lubricant marketers and their customers».</p></div>
+      </div>
+      <p class="src">
+        <a href="https://roboticsandautomationnews.com/2025/11/05/john-deere-customers-use-autonomous-see-spray-technology-across-5-million-acres-in-2025/96266/" target="_blank" rel="noopener noreferrer">Robotics &amp; Automation News, 05.11.2025</a>
+        <a href="https://www.lubesngreases.com/lubereport-americas/1_11/fuchs-adds-wireless-sensor-based-monitoring/" target="_blank" rel="noopener noreferrer">Lube Report, 14.03.2018</a>
+      </p>
+    </article>
+
+    <div class="sp3" style="display:flex;gap:32px;align-items:center;flex-wrap:wrap">
+      <button class="go" id="sigNext">Nächste Entwicklung</button>
+      <button class="go" id="sigDone" data-next="s4" hidden>Zusammenlegen</button>
+    </div>
+  </div>
+</section>
+
+<!-- 04 connect -->
+<section class="scene" id="s4" hidden data-screen-label="04 Verbindung">
+  <div class="gut"><span class="label">Verbindung</span></div>
+  <div class="main">
+    <div class="stack rv" id="stack" tabindex="-1">
+      <div><span>01</span><span>weniger Liter, bei allen Anbietern</span></div>
+      <div><span>02</span><span>weniger Menschen am Tank</span></div>
+      <div><span>03</span><span>mehr Entscheidungen in der Steuerung</span></div>
+      <div><span>04</span><span>bezahlt wird, wer misst</span></div>
+    </div>
+    <div class="sp3 rv" id="mergeWrap"><button class="go" id="mergeBtn">Was folgt daraus?</button></div>
+    <div id="insight" hidden>
+      <h2 class="h rv">Jeder Liter, den ein Blaser-Kunde einspart, wird bezahlt.</h2>
+      <p class="h sp1 rv" data-d="1200">Offen ist nur, <span class="pink">an wen</span>.</p>
+      <p class="lead sp4 rv" data-d="2400">Was der Kunde dann eigentlich kauft, ist keine Flüssigkeit. Es ist eine Emulsion, die stabil bleibt, während niemand hinsieht.</p>
+      <p class="small sp2 rv" data-d="3000">Für Blaser ist das weniger fremd, als es klingt. Das Bio-Konzept hinter Blasocut verkauft seit über 40 Jahren lange Standzeit, also seltener Nachkauf. Blaser hält eigene Patente zur Überwachung von Emulsionen und entwickelt eine Kamera, die Werkzeugverschleiss misst.</p>
+      <p class="small sp1 rv" data-d="3400">Die Box kann jeder bauen. Das Wissen, warum eine Emulsion kippt, nicht.</p>
+      <p class="src rv" data-d="3400">
+        <a href="https://www.northdata.com/Blaser%20Swisslube%20AG,%20R%C3%BCegsauschachen/CHE-102.490.420" target="_blank" rel="noopener noreferrer">Patentpublikationen Blaser Swisslube AG, 2020 und 2023</a>
+        <a href="https://blaser.com/category/know-how/" target="_blank" rel="noopener noreferrer">blaser.com, Know-how</a>
+      </p>
+      <div class="sp3 rv" data-d="3800"><button class="go" data-next="s5">Weiter</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 fork -->
+<section class="scene" id="s5" hidden data-screen-label="05 Weiche">
+  <div class="gut"><span class="label">Eine Weiche</span></div>
+  <div class="wide">
+    <h2 class="h2 rv" tabindex="-1">Angenommen, Liquidtool wird der Ort, an dem eingesparte Liter bezahlt werden.</h2>
+    <p class="h sp2 rv">Für wen soll es messen?</p>
+    <div class="fork rv" id="fork" role="group" aria-label="Wählen Sie eine Richtung">
+      <button class="opt" data-c="a"><span class="label">A</span><h3>Für Blaser.</h3><p>Liquidtool bleibt nah an der Chemie. Jede Messung macht die eigene Rezeptur besser, jeder verbundene Tank bleibt ein Blaser-Tank.</p></button>
+      <button class="opt" data-c="b"><span class="label">B</span><h3>Für alle.</h3><p>Liquidtool wird neutral. Es misst auch in Tanks mit Castrol, Fuchs oder Motorex und verdient dort, ohne einen einzigen Blaser-Liter zu kosten.</p></button>
+    </div>
+    <p class="label sp2 rv" style="text-transform:none;letter-spacing:0;font-size:12px;max-width:70ch">Heute gilt beides ein wenig. Liquidtool ist «nicht nur mit Blaser Kühlschmierstoffen kompatibel, sondern auch mit Produkten anderer Hersteller» (Rolf Schneider, Blaser, Technische Rundschau 2024) und erscheint auf blaser.com unter «Automation Blaser».</p>
+    <div id="cons" hidden>
+      <div class="cons">
+        <div class="rv"><span class="label">Das stärkt</span><p class="lead sp1" id="consA"></p></div>
+        <div class="rv" data-d="500"><span class="label">Das lässt offen</span><p class="lead sp1" id="consB"></p></div>
+      </div>
+      <p class="h2 sp3 rv" data-d="1200">Beide Wege sind vertretbar. Sie führen zu verschiedenen Firmen.</p>
+      <div class="sp3 rv" data-d="1600"><button class="go" data-next="s6">Weiter</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 liquidtool -->
+<section class="scene" id="s6" hidden data-screen-label="06 Liquidtool">
+  <div class="gut"><span class="label">Liquidtool</span></div>
+  <div class="wide">
+    <div class="split">
+      <div class="rv">
+        <p class="label">Heute, belegt</p>
+        <ul class="facts sp1">
+          <li>AutoPilot überwacht und dosiert den Kühlschmierstoff automatisch an der Maschine.</li>
+          <li>Guardian für zentrale Anlagen ab 20'000 Litern: pH, Leitfähigkeit, automatisches Additiv-Management.</li>
+          <li>Manager kostenlos bis 9 Maschinen. AutoPilot ab EUR 95 pro Maschine und Monat, im Abo.</li>
+          <li>«1 500 + machines automated in 25 + countries» <span class="grey">(Anbieterangabe)</span></li>
+          <li>Kompatibel mit Produkten anderer Hersteller.</li>
+          <li>Eigene Gesellschaft in Rüegsau. Der Registerzweck nennt Sensor- und Informationstechnologien, nicht Kühlschmierstoff.</li>
+          <li><a href="https://liquidtool.com/en/pricing/" target="_blank" rel="noopener noreferrer">liquidtool.com/pricing</a> · <a href="https://www.technische-rundschau.ch/smartes-kss-management-mit-autopilot" target="_blank" rel="noopener noreferrer">Technische Rundschau</a> · <a href="https://www.moneyhouse.ch/en/company/liquidtool-systems-ag-3842233831" target="_blank" rel="noopener noreferrer">Handelsregister</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label rv">2035, Hypothese</p>
+        <p class="h2 sp1 rv" tabindex="-1">Vielleicht ist Liquidtool nicht deshalb interessant, weil es digital ist.</p>
+        <p class="h2 sp3 rv" data-d="1400">Sondern weil Blaser hier zum ersten Mal pro Maschine bezahlt wird. <span class="pink">Nicht pro Liter.</span></p>
+        <p class="lead sp3 rv" data-d="2600">Nach eigener Rechnung behält Liquidtool rund ein Fünftel des Werts, den es schafft: EUR 95 Preis gegenüber «up to €450» Ersparnis pro Maschine und Monat.</p>
+        <p class="lead sp1 rv" data-d="3200">Ein Fünftel ist ein Anfang. Keine Obergrenze.</p>
+        <div class="sp3 rv" data-d="3600"><button class="go" data-next="s7">Weiter</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 migration -->
+<section class="scene" id="s7" hidden data-screen-label="07 Wertverschiebung">
+  <div class="gut"><span class="label">Einheit</span></div>
+  <div class="wide">
+    <h2 class="h rv" tabindex="-1">Wofür wird Blaser bezahlt?</h2>
+    <div class="mig rv" aria-hidden="true">
+      <div class="mrow"><span class="label">Liter</span><div class="bar" id="b1"></div></div>
+      <div class="mrow"><span class="label">Maschine pro Monat</span><div class="bar" id="b2"></div></div>
+      <div class="mrow"><span class="label">Stabile Stunde</span><div class="bar open" id="b3"></div></div>
+      <div class="mrow"><span class="label">?</span><div class="bar open" id="b4"></div></div>
+    </div>
+    <div class="slider rv">
+      <label for="year" class="label">Jahr</label>
+      <input type="range" id="year" min="2026" max="2035" step="1" value="2026" aria-valuetext="2026">
+      <span id="yr">2026</span>
+    </div>
+    <p class="label sp2 rv" style="text-transform:none;letter-spacing:0;font-size:12px">Keine Prognose. Die Breiten sind eine Frage, keine Schätzung. Gestrichelt: heute nicht abgerechnet.</p>
+    <p class="h2 sp3" id="migQ" style="opacity:0;transition:opacity 1s">Die Marge wandert. Wandert Blaser mit?</p>
+    <div class="sp3 rv" data-d="600"><button class="go" data-next="s8">Die drei Hypothesen</button></div>
+  </div>
+</section>
+
+<!-- 08 hypotheses -->
+<section class="scene" id="s8" hidden data-screen-label="08 Hypothesen">
+  <div class="gut"><span class="label">Blaser-2035-Hypothesen</span></div>
+  <div class="full">
+    <div class="hyp rv">
+      <div class="n">H 01</div>
+      <div class="b">
+        <h3 class="h" tabindex="-1">Blaser verkauft 2035 weniger Liter. Und wird für die Stunden bezahlt, in denen nichts passiert.</h3>
+        <div class="meta">
+          <div><span class="label">Weil</span>Kunden den Nutzen heute schon in Zeit messen. Kaeser, ebenfalls ein Familienunternehmen, rechnet Druckluft seit 2017 pro 1'000 m³ ab. Deere lässt sich nur für Einsparung bezahlen.</div>
+          <div><span class="label">Frage an Blaser</span>Welche Einheit würde ein Lohnfertiger im Mittelland akzeptieren: Spindelstunde, Gutteil, vermiedener Stillstand?</div>
+        </div>
+        <p class="test">wenn blaser pro stabiler stunde abrechnet, dann wird jeder gesparte liter bis 2035 zu marge.</p>
+      </div>
+    </div>
+    <div class="hyp o2 rv" data-d="600">
+      <div class="n">H 02</div>
+      <div class="b">
+        <h3 class="h">Liquidtool wächst 2035 dort am stärksten, wo kein Blaser im Tank ist.</h3>
+        <div class="meta">
+          <div><span class="label">Weil</span>jeder grosse Anbieter seine eigene Box hat und Betriebe mit mehreren Lieferanten keine Box pro Marke wollen. Gewechselt wird oft: «Jetzt haben wir den 4. Anbieter im 3 Jahr.»</div>
+          <div><span class="label">Frage an Blaser</span>Was müsste gelten, damit ein Castrol-Kunde einer Blaser-Schwester seine Daten anvertraut?</div>
+        </div>
+        <p class="test">wenn liquidtool glaubwürdig neutral ist, dann wird jeder markenwechsel bis 2035 zum einstieg.</p>
+      </div>
+    </div>
+    <div class="hyp o3 rv" data-d="1200">
+      <div class="n">H 03</div>
+      <div class="b">
+        <h3 class="h">Der wichtigste Kunde von Blaser ist 2035 vielleicht keine Person. Sondern eine Steuerung.</h3>
+        <div class="meta">
+          <div><span class="label">Weil</span>Steuerungen bereits Kühlmitteldüsen führen und Verschleiss messen. Heidenhain liefert 2026 die 330'000. TNC-Steuerung aus. Blaser hält Patente zur Überwachung von Emulsionen.</div>
+          <div><span class="label">Frage an Blaser</span>Wer liefert der Steuerung den Zustand der Emulsion, und zu wessen Bedingungen?</div>
+        </div>
+        <p class="test">wenn die steuerung das kühlmittel regelt, dann entscheidet bis 2035 die schnittstelle mit über die rezeptur.</p>
+      </div>
+    </div>
+    <div class="sp4 rv" data-d="1600" style="padding-left:calc((100% - 11*24px)/12*3 + 72px)"><button class="go" data-next="s9">Zurück zur Frage</button></div>
+  </div>
+</section>
+
+<!-- 09 return -->
+<section class="scene" id="s9" hidden data-screen-label="09 Zurück zur Frage">
+  <div class="gut"><span class="label">Die Frage</span></div>
+  <div class="main">
+    <p class="lead grey rv" tabindex="-1">Was, wenn der grösste Wachstumsmotor Ihrer Gruppe 2035 genau das Geschäft ist, das den Verbrauch des eigenen Kernprodukts reduziert?</p>
+    <p class="h sp4 rv" data-d="1200">Vielleicht widersprechen sich Wachstum und Verbrauch gar nicht.</p>
+    <p class="h sp1 rv" data-d="2400">Sie werden nur in <span class="pink">derselben Einheit</span> gemessen.</p>
+    <p class="lead sp4 rv" data-d="3600">Für die Gruppe stellt sich damit eine andere Frage als für die Firma. Was soll KORAS besitzen, wenn der Liter nicht mehr die einzige Einheit ist? Die Chemie. Die Messung. Oder das Versprechen, dass die Maschine läuft.</p>
+    <p class="small sp2 rv" data-d="4200" id="echo"></p>
+    <div class="sp3 rv" data-d="4600"><button class="go" data-next="s10">Weiter</button></div>
+  </div>
+</section>
+
+<!-- 10 loslassen -->
+<section class="scene" id="s10" hidden data-screen-label="10 Gleichung">
+  <div class="gut"><span class="label">&nbsp;</span></div>
+  <div class="wide">
+    <p class="lead rv" tabindex="-1">Vielleicht beginnt die interessanteste Hypothese deshalb nicht mit einer Technologie.</p>
+    <p class="lead sp2 rv" data-d="1600">Sondern mit Loslassen.</p>
+    <p class="lead sp2 rv grey" data-d="3000">Diesmal nicht einer Aufgabe. Einer Gleichung.</p>
+    <div class="eq sp4 rv" data-d="4200" id="eq" aria-label="Mehr Wachstum gleich mehr Verbrauch, durchgestrichen">
+      <span>Mehr Wachstum</span><span>=</span><span class="strike">mehr Verbrauch.</span><span class="qm">?</span>
+    </div>
+    <p class="h sp4 rv" data-d="7200" style="max-width:26ch">Was müsste Blaser 2035 verkaufen, damit jeder Liter, den ein Kunde nicht braucht, für Blaser ein Gewinn ist?</p>
+    <div class="sp4 rv" data-d="9200">
+      <p class="small">Drei Hypothesen. Und eine Gegenhypothese.</p>
+      <div class="sp1"><button class="go" id="ctr" aria-expanded="false" aria-controls="counter">Gegenhypothese</button></div>
+      <div class="counter" id="counter">
+        <div class="sp3" style="max-width:720px">
+          <h3 class="h2">Kunden wollen gar keine Ergebnisse kaufen. Sie wollen Liter, die sie selbst kontrollieren.</h3>
+          <div class="hyp" style="margin-top:28px;display:block">
+            <div class="meta">
+              <div><span class="label">Weil</span>die Schweiz Chemical Leasing seit 2016 offiziell unterstützt und es trotzdem selten bleibt. Pay-per-Part brauchte bei Trumpf einen Rückversicherer, Munich Re. Und ab Dezember 2026 gilt Software im EU-Haftungsrecht als Produkt.</div>
+              <div><span class="label">Frage an Blaser</span>Wer trägt das Risiko, wenn der Prozess steht?</div>
+            </div>
+          </div>
+          <p class="src">
+            <a href="https://en.wikipedia.org/wiki/Chemical_leasing" target="_blank" rel="noopener noreferrer">Chemical Leasing</a>
+            <a href="https://www.trumpf.com/en_US/newsroom/global-press-releases/press-release-detail-page/release/pay-per-part-trumpf-und-munich-re-planen-neues-geschaeftsmodell-fuer-die-produzierende-industrie/" target="_blank" rel="noopener noreferrer">Trumpf, 14.10.2020</a>
+            <a href="https://www.reedsmith.com/articles/eu-product-liability-directive-where-things-stand-with-member-state-transposition/" target="_blank" rel="noopener noreferrer">EU-Richtlinie 2024/2853</a>
+          </p>
+        </div>
+      </div>
+      <p class="end">Hasle-Rüegsau, 2035. Vielleicht.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var choice = null;
+
+  function scrollToEl(el){
+    var y = el.getBoundingClientRect().top + window.pageYOffset;
+    window.scrollTo({top:y, behavior: reduced ? 'auto' : 'smooth'});
+  }
+  function stagger(root){
+    root.querySelectorAll('.rv').forEach(function(el){
+      if (el.closest('[hidden]') && el.closest('[hidden]') !== root) return;
+      var d = parseInt(el.getAttribute('data-d')||'0',10);
+      if (reduced) { el.classList.add('on'); return; }
+      el.style.transitionDelay = (d/1000 + 0.15) + 's';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add('on'); }); });
+    });
+  }
+  function reveal(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    var first = el.hidden;
+    el.hidden = false;
+    if (first) {
+      stagger(el);
+      if (id === 's1') setTimeout(runCounts, reduced ? 0 : 1300);
+      if (id === 's7') setTimeout(autoYear, reduced ? 0 : 900);
+      if (id === 's9') setEcho();
+      if (id === 's10') setTimeout(function(){ document.getElementById('eq').classList.add('cut'); }, reduced ? 0 : 5600);
+    }
+    setTimeout(function(){
+      scrollToEl(el);
+      var f = el.querySelector('[tabindex="-1"]');
+      if (f) f.focus({preventScroll:true});
+    }, 30);
+  }
+  document.querySelectorAll('[data-next]').forEach(function(b){
+    b.addEventListener('click', function(){ reveal(b.getAttribute('data-next')); });
+  });
+
+  // counting numbers on the 2035 document
+  function fmt(v, f){
+    if (f === 'pct') return (v < 0 ? '\u2212' : '') + Math.abs(v) + '\u202F%';
+    if (f === 'pctp') return (v > 0 ? '+' : '') + v + '\u202F%';
+    return String(v);
+  }
+  function runCounts(){
+    document.querySelectorAll('#s1 [data-count]').forEach(function(el){
+      var p = el.getAttribute('data-count').split(':').map(Number), f = el.getAttribute('data-fmt');
+      if (reduced) { el.textContent = fmt(p[1], f); return; }
+      var t0 = null, dur = 2200;
+      function step(t){
+        if (!t0) t0 = t;
+        var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(Math.round(p[0] + (p[1] - p[0]) * e), f);
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  // signals stepper
+  var sigs = document.querySelectorAll('.sig'), ticks = document.querySelectorAll('#s3 .ticks i'), si = 0;
+  var nextBtn = document.getElementById('sigNext'), doneBtn = document.getElementById('sigDone');
+  nextBtn.addEventListener('click', function(){
+    if (si >= sigs.length - 1) return;
+    sigs[si].classList.remove('cur'); si++; sigs[si].classList.add('cur');
+    ticks[si].classList.add('on');
+    if (si === sigs.length - 1) { nextBtn.hidden = true; doneBtn.hidden = false; }
+    scrollToEl(document.getElementById('s3'));
+  });
+
+  // merge
+  document.getElementById('mergeBtn').addEventListener('click', function(){
+    document.getElementById('stack').classList.add('merge');
+    document.getElementById('mergeWrap').style.display = 'none';
+    var ins = document.getElementById('insight');
+    setTimeout(function(){
+      ins.hidden = false; stagger(ins);
+      scrollToEl(ins);
+    }, reduced ? 0 : 1100);
+  });
+
+  // fork
+  var CONS = {
+    a: ['Einen Lernkreis, der schwer zu kopieren ist: eigene Chemie, eigene Messung, eigene Anwendungstechnik, alles in einem Tank.',
+        'Die vielen Tanks, in denen ohne Blaser gespart wird. Dort misst dann Castrol, Quaker Houghton oder Motorex, und bekommt den Wert des eingesparten Liters.'],
+    b: ['Wachstum ohne Kannibalisierung und ein Blick in Prozesse weit über die eigene Kundschaft hinaus.',
+        'Vertrauen verlangt Abstand. Je glaubwürdiger Liquidtool neutral ist, desto weniger gehört sein Wert Blaser Swisslube. Und desto mehr der Gruppe.']
+  };
+  var fork = document.getElementById('fork');
+  fork.querySelectorAll('.opt').forEach(function(o){
+    o.addEventListener('click', function(){
+      if (choice) return;
+      choice = o.getAttribute('data-c');
+      fork.classList.add('chosen'); o.classList.add('sel');
+      fork.querySelectorAll('.opt').forEach(function(x){ x.setAttribute('aria-pressed', x === o ? 'true' : 'false'); });
+      document.getElementById('consA').textContent = CONS[choice][0];
+      document.getElementById('consB').textContent = CONS[choice][1];
+      var c = document.getElementById('cons'); c.hidden = false; stagger(c);
+      setTimeout(function(){ scrollToEl(c); }, 60);
+    });
+  });
+  function setEcho(){
+    var t = {
+      a: 'Sie haben vorhin Nähe gewählt. Dann ist die Frage, wie nah Blaser dem Ergebnis kommt. Nicht nur dem Tank.',
+      b: 'Sie haben vorhin Neutralität gewählt. Dann ist die Frage, was Blaser Swisslube verkauft, wenn Liquidtool auch in fremden Tanks misst.'
+    };
+    document.getElementById('echo').textContent = choice ? t[choice] : '';
+  }
+
+  // value migration
+  var yr = document.getElementById('year'), yrOut = document.getElementById('yr'), mq = document.getElementById('migQ');
+  var B = [['b1',100,56],['b2',0,30],['b3',0,38],['b4',0,22]];
+  function draw(y){
+    var k = (y - 2026) / 9;
+    B.forEach(function(b){ document.getElementById(b[0]).style.width = (b[1] + (b[2]-b[1]) * k) + '%'; });
+    yrOut.textContent = Math.round(y);
+    yr.setAttribute('aria-valuetext', String(Math.round(y)));
+    if (k >= .99) mq.style.opacity = 1;
+  }
+  yr.addEventListener('input', function(){ draw(+yr.value); });
+  draw(2026);
+  function autoYear(){
+    if (reduced) { yr.value = 2035; draw(2035); return; }
+    var t0 = null, dur = 3600;
+    function step(t){
+      if (!t0) t0 = t;
+      var k = Math.min(1, (t - t0)/dur), e = k<.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2, y = 2026 + 9*e;
+      yr.value = Math.round(y); draw(y);
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // counter hypothesis
+  var ctr = document.getElementById('ctr');
+  ctr.addEventListener('click', function(){
+    var c = document.getElementById('counter'), open = !c.classList.contains('open');
+    c.classList.toggle('open', open);
+    ctr.setAttribute('aria-expanded', String(open));
+  });
+})();
+</script>
+</body>
+</html>
